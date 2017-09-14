@@ -1,13 +1,31 @@
 import React from 'react'
-// import * as BooksAPI from './BooksAPI'
+import * as BooksAPI from './BooksAPI'
 import './App.css'
 import { Route, Link } from 'react-router-dom'
 import Shelf from './components/Shelf'
 
 class BooksApp extends React.Component {
   state = {
-    books: []
+      currentlyReading: [],
+      read: [],
+      wantToRead: []
   };
+
+  //will get our initial state of the page by getting all books
+  //then filtering them out by their respective states
+  componentDidMount() {
+    BooksAPI.getAll().then((books) => {
+      let currentReading = books.filter( book => book.shelf === 'currentlyReading');
+      let wantToRead = books.filter( book => book.shelf === 'wantToRead');
+      let read = books.filter( book => book.shelf === 'read');
+      this.setState({
+          currentlyReading: currentReading,
+          wantToRead: wantToRead,
+          read: read
+      });
+      console.log(this.state);
+    })
+  }
 
   render() {
     return (
@@ -22,14 +40,17 @@ class BooksApp extends React.Component {
                   <Shelf
                     title="Currently Reading"
                     cat="currentlyReading"
+                    books={this.state.currentlyReading}
                   />
                   <Shelf
                       title="Want to Read"
                       cat="wantToRead"
+                      books={this.state.wantToRead}
                   />
                   <Shelf
                       title="Read"
                       cat="read"
+                      books={this.state.read}
                   />
                 </div>
               </div>
