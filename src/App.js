@@ -27,6 +27,53 @@ class BooksApp extends React.Component {
     })
   }
 
+  moveBookShelf = (book, newValue) => {
+
+      // this switch will remove from one of the states
+      switch (book.props.book.shelf) {
+          case 'currentlyReading':
+              this.setState( (state) => ({
+                  currentlyReading: state.currentlyReading.filter( (b) => b.id !== book.props.book.id)
+              }));
+              break;
+          case 'wantToRead':
+              this.setState( (state) => ({
+                  wantToRead: state.wantToRead.filter( (b) => b.id !== book.props.book.id)
+              }));
+              break;
+          case 'read':
+              this.setState( (state) => ({
+                  read: state.read.filter( (b) => b.id !== book.props.book.id)
+              }));
+              break;
+          default:
+      }
+
+      //this switch will add the book to its new shelf
+      switch (newValue) {
+          case 'currentlyReading':
+              book.props.book.shelf = newValue;
+              this.setState( (state) => ({
+                  currentlyReading: state.currentlyReading.concat([book.props.book])
+              }));
+              break;
+          case 'wantToRead':
+              book.props.book.shelf = newValue;
+              this.setState( (state) => ({
+                  wantToRead: state.wantToRead.concat([book.props.book])
+              }));
+              break;
+          case 'read':
+              book.props.book.shelf = newValue;
+              this.setState( (state) => ({
+                  read: state.read.concat([book.props.book])
+              }));
+              break;
+          default:
+      }
+
+  }
+
   render() {
     return (
       <div className="app">
@@ -41,16 +88,19 @@ class BooksApp extends React.Component {
                     title="Currently Reading"
                     cat="currentlyReading"
                     books={this.state.currentlyReading}
+                    onBookShelfChange={this.moveBookShelf}
                   />
                   <Shelf
                       title="Want to Read"
                       cat="wantToRead"
                       books={this.state.wantToRead}
+                      onBookShelfChange={this.moveBookShelf}
                   />
                   <Shelf
                       title="Read"
                       cat="read"
                       books={this.state.read}
+                      onBookShelfChange={this.moveBookShelf}
                   />
                 </div>
               </div>

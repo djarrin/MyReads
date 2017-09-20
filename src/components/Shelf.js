@@ -6,9 +6,13 @@ class Shelf extends Component {
     static propTypes = {
         title: PropTypes.string.isRequired,
         cat: PropTypes.string.isRequired,
-        books: PropTypes.array.isRequired
+        books: PropTypes.array.isRequired,
+        onBookShelfChange: PropTypes.func.isRequired
     };
 
+    handleBookShelfChange = (book, shelf) => {
+        this.props.onBookShelfChange(book, shelf);
+    }
     render() {
 
 
@@ -20,9 +24,8 @@ class Shelf extends Component {
                         {this.props.books.map((book) => (
                             <li key={book.id}>
                                 <Book
-                                    title={book.title}
-                                    author={book.author}
-                                    bookImage={book.imageLinks.thumbnail}
+                                    book={book}
+                                    booksShelfChange={this.handleBookShelfChange}
                                 />
                             </li>
                         ))}
@@ -32,11 +35,5 @@ class Shelf extends Component {
         )
     }
 }
-
-Shelf.propTypes = {
-    title: PropTypes.string.isRequired,
-    cat: PropTypes.string.isRequired,
-    books: PropTypes.array.isRequired
-};
 
 export default Shelf
