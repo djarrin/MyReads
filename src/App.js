@@ -53,6 +53,7 @@ class BooksApp extends React.Component {
       switch (newValue) {
           case 'currentlyReading':
               book.props.book.shelf = newValue;
+
               this.setState( (state) => ({
                   currentlyReading: state.currentlyReading.concat([book.props.book])
               }));
@@ -71,6 +72,8 @@ class BooksApp extends React.Component {
               break;
           default:
       }
+
+      BooksAPI.update(book.props.book, newValue);
 
   }
 
