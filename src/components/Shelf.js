@@ -4,8 +4,6 @@ import Book from './Book'
 
 class Shelf extends Component {
     static propTypes = {
-        title: PropTypes.string.isRequired,
-        cat: PropTypes.string.isRequired,
         books: PropTypes.array.isRequired,
         onBookShelfChange: PropTypes.func.isRequired
     };
@@ -34,6 +32,11 @@ class Shelf extends Component {
             </div>
         )
     }
+}
+
+Shelf.propTypes = {
+    books: PropTypes.array.isRequired,
+    onBookShelfChange: PropTypes.func.isRequired
 }
 
 export default Shelf

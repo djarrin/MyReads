@@ -2,7 +2,7 @@ import React , { Component } from 'react';
 import PropTypes from 'prop-types';
 
 class Book extends Component {
-    static propTypess = {
+    static propTypes = {
         book: PropTypes.object.isRequired,
         booksShelfChange: PropTypes.func.isRequired
     };
@@ -13,6 +13,16 @@ class Book extends Component {
     }
 
     render() {
+        if(this.props.book.authors === undefined) {
+            this.props.book.authors = '';
+        }
+        if(this.props.book.shelf === undefined) {
+            this.props.book.shelf = 'none';
+        }
+        if(this.props.book.imageLinks === undefined ) {
+            this.props.book.imageLinks = ['thumbnail'];
+            this.props.book.imageLinks.thumbnail = 'https://library.britishcouncil.org.in/static-content/isbn/noimage.jpg';
+        }
         return (
             <div className="book">
                 <div className="book-top">
@@ -31,11 +41,16 @@ class Book extends Component {
                 </div>
                 <div className="book-title">{this.props.book.title}</div>
                 {/*TODO:need to seperate each author out by a comma*/}
+
                 <div className="book-authors">{this.props.book.authors[0]}</div>
             </div>
         )
     }
 }
 
+Book.propTypes = {
+    book: PropTypes.object.isRequired,
+    booksShelfChange: PropTypes.func.isRequired
+}
 
 export default Book

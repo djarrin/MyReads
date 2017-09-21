@@ -3,18 +3,21 @@ import * as BooksAPI from './BooksAPI'
 import './App.css'
 import { Route, Link } from 'react-router-dom'
 import Shelf from './components/Shelf'
+import Book from "./components/Book";
 
 class BooksApp extends React.Component {
   state = {
       currentlyReading: [],
       read: [],
-      wantToRead: []
+      wantToRead: [],
+      searchBooks: []
   };
 
   //will get our initial state of the page by getting all books
   //then filtering them out by their respective states
   componentDidMount() {
     BooksAPI.getAll().then((books) => {
+
       let currentReading = books.filter( book => book.shelf === 'currentlyReading');
       let wantToRead = books.filter( book => book.shelf === 'wantToRead');
       let read = books.filter( book => book.shelf === 'read');
@@ -23,7 +26,7 @@ class BooksApp extends React.Component {
           wantToRead: wantToRead,
           read: read
       });
-      console.log(this.state);
+
     })
   }
 
@@ -77,6 +80,77 @@ class BooksApp extends React.Component {
 
   }
 
+  intersect = (a, b) => {
+        let t;
+        if (b.length > a.length) {
+            t = b;
+            b = a;
+            a = t; // indexOf to loop over shorter
+        }
+        return a.filter(function (e) {
+            return b.indexOf(e) > -1;
+        });
+  }
+
+  updateQuery = (query) => {
+
+      //if query is empty set the searchBooks state
+      //to empty and return so as not to make an unnecessary
+      //request
+      if(query === '') {
+          this.setState({
+              searchBooks: []
+          })
+
+          return
+      }
+
+      BooksAPI.search(query, 20).then((books) => {
+
+          //since the search method does not return proper shelf we need to iterate over our current
+          //states and the new search terms to find what the current shelf state is for each book
+          let bookIds = books.map( book => book.id);
+          let currentlyReadingIntersect = this.intersect(bookIds, this.state.currentlyReading.map( cr => cr.id));
+          let readIntersects = this.intersect(bookIds, this.state.read.map( r => r.id));
+          let wantToReadIntersects = this.intersect(bookIds, this.state.wantToRead.map( wr => wr.id));
+
+         for(let i = 0; i < books.length; i++) {
+             if(currentlyReadingIntersect.includes(books[i].id)) {
+                 books[i].shelf = 'currentlyReading';
+             }
+             if(readIntersects.includes(books[i].id)) {
+                 books[i].shelf = 'read';
+             }
+             if(wantToReadIntersects.includes(books[i].id)) {
+                 books[i].shelf = 'wantToRead';
+             }
+         }
+
+          //if call returns empty/error set searchBooks prop to empty
+          if (books !== undefined && books.error !== "empty query") {
+
+              this.setState({
+                  searchBooks: books
+              })
+          } else {
+              this.setState({
+                  searchBooks: []
+              })
+          }
+
+      })
+
+
+  }
+
+  //used to clear query and state on search page exit
+  clearQuery = () => {
+      this.setState({
+          query: '',
+          searchBooks: []
+      })
+  }
+
   render() {
     return (
       <div className="app">
@@ -122,22 +196,28 @@ class BooksApp extends React.Component {
                 <Link
                   to="/"
                   className="close-search"
+                  onClick={this.clearQuery}
                 >Close</Link>
                 <div className="search-books-input-wrapper">
-                    {/*
-                  NOTES: The search from BooksAPI is limited to a particular set of search terms.
-                  You can find these search terms here:
-                  https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
-
-                  However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-                  you don't find a specific author or title. Every search is limited by search terms.
-                */}
-                  <input type="text" placeholder="Search by title or author"/>
+                  <input
+                      type="text"
+                      placeholder="Search by title or author"
+                      onChange={(event) => this.updateQuery(event.target.value)}
+                  />
 
                 </div>
               </div>
               <div className="search-books-results">
-                <ol className="books-grid"></ol>
+                <ol className="books-grid">
+                    {this.state.searchBooks.map(book => (
+                        <li key={book.id}>
+                            <Book
+                                book={book}
+                                booksShelfChange={this.moveBookShelf}
+                            />
+                        </li>
+                    ))}
+                </ol>
               </div>
             </div>
         )}
