@@ -80,6 +80,7 @@ class BooksApp extends React.Component {
 
   }
 
+  //got this function from https://stackoverflow.com/questions/16227197/compute-intersection-of-two-arrays-in-javascript
   intersect = (a, b) => {
         let t;
         if (b.length > a.length) {
