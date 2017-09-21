@@ -40,9 +40,7 @@ class Book extends Component {
                     </div>
                 </div>
                 <div className="book-title">{this.props.book.title}</div>
-                {/*TODO:need to seperate each author out by a comma*/}
-
-                <div className="book-authors">{this.props.book.authors[0]}</div>
+                <div className="book-authors">{this.props.book.authors.join(' and ')}</div>
             </div>
         )
     }
