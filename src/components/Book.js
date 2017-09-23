@@ -5,7 +5,7 @@ class Book extends Component {
     static propTypes = {
         book: PropTypes.object.isRequired,
         booksShelfChange: PropTypes.func.isRequired
-    };
+    }
 
     handleShelfChange = (e) => {
         let newValue = e.target.value;
@@ -13,16 +13,25 @@ class Book extends Component {
     }
 
     render() {
-        if(this.props.book.authors === undefined) {
+        const { title } = this.props.book;
+
+        if(this.props.book.authors !== undefined && Array.isArray(this.props.book.authors) && this.props.book.authors.length > 1) {
+            this.props.book.authors = this.props.book.authors.join(' and ');
+        } else if (this.props.book.authors !== undefined && Array.isArray(this.props.book.authors)) {
+            this.props.book.authors = this.props.book.authors[0];
+        } else if(this.props.book.authors === undefined) {
             this.props.book.authors = '';
         }
+
         if(this.props.book.shelf === undefined) {
             this.props.book.shelf = 'none';
         }
+
         if(this.props.book.imageLinks === undefined ) {
             this.props.book.imageLinks = ['thumbnail'];
             this.props.book.imageLinks.thumbnail = 'https://library.britishcouncil.org.in/static-content/isbn/noimage.jpg';
         }
+
         return (
             <div className="book">
                 <div className="book-top">
@@ -39,16 +48,12 @@ class Book extends Component {
                         </select>
                     </div>
                 </div>
-                <div className="book-title">{this.props.book.title}</div>
-                <div className="book-authors">{this.props.book.authors.join(' and ')}</div>
+                <div className="book-title">{title}</div>
+                <div className="book-authors">{this.props.book.authors}</div>
             </div>
         )
     }
 }
 
-Book.propTypes = {
-    book: PropTypes.object.isRequired,
-    booksShelfChange: PropTypes.func.isRequired
-}
 
 export default Book

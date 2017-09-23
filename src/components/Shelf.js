@@ -6,7 +6,7 @@ class Shelf extends Component {
     static propTypes = {
         books: PropTypes.array.isRequired,
         onBookShelfChange: PropTypes.func.isRequired
-    };
+    }
 
     handleBookShelfChange = (book, shelf) => {
         this.props.onBookShelfChange(book, shelf);
@@ -34,9 +34,5 @@ class Shelf extends Component {
     }
 }
 
-Shelf.propTypes = {
-    books: PropTypes.array.isRequired,
-    onBookShelfChange: PropTypes.func.isRequired
-}
 
 export default Shelf
