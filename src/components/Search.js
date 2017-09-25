@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import * as BooksAPI from '../BooksAPI'
 import PropTypes from 'prop-types';
 import Book from './Book'
+import { Debounce } from 'react-throttle';
 
 class Search extends Component {
     state = {
@@ -109,11 +110,14 @@ class Search extends Component {
                         onClick={this.clearQuery}
                     >Close</Link>
                     <div className="search-books-input-wrapper">
-                        <input
-                            type="text"
-                            placeholder="Search by title or author"
-                            onChange={(event) => this.updateQuery(event.target.value)}
-                        />
+                        {/*Have the Debouce method here to prevent quick type errors*/}
+                        <Debounce time="200" handler="onChange">
+                            <input
+                                type="text"
+                                placeholder="Search by title or author"
+                                onChange={(event) => this.updateQuery(event.target.value)}
+                            />
+                        </Debounce>
 
                     </div>
                 </div>
